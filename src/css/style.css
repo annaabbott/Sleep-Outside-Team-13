@@ -241,6 +241,45 @@ button {
   grid-column: 3;
 }
 
+/* Discount indicator-product listing */
+
+
+.discount-flag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #e74c3c;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.price-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #95a5a6;
+  font-size: 0.9em;
+}
+
+.final-price {
+  color: #2ecc71;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.product-card {
+  position: relative;
+  overflow: hidden;
+}
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

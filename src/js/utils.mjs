@@ -43,3 +43,9 @@ export function renderListWithTemplate(
   const htmlStrings = list.map(templateFn);
   parentElement.insertAdjacentHTML(position, htmlStrings.join(''));
 }
+
+//Implementation Steps for Discount Indicator
+export function calculateDiscount(originalPrice, finalPrice) {
+  if (!originalPrice || originalPrice <= finalPrice) return 0;
+  return Math.round(((originalPrice - finalPrice) / originalPrice) * 100);
+}

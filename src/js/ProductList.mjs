@@ -38,8 +38,8 @@ export default class ProductList {
     this.listElement = listElement;
   }
 
-  async init() {
-    const list = await this.dataSource.getData();
+  init() {
+    return this.dataSource.getData();
   }
 
   renderList(list) {

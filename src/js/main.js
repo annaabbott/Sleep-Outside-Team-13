@@ -6,3 +6,6 @@ const dataSource = new ProductData("tents");
 const element = document.querySelector(".product-list");
 
 const list = new ProductList("tents", dataSource, element);
+
+const productList = await list.init();
+list.renderList(productList);

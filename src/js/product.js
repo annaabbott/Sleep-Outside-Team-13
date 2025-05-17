@@ -8,22 +8,22 @@ const product = new ProductDetails(productId, dataSource);
 product.init();
 
 // Test the parameter
-console.log("Product ID:", productId);
+// console.log("Product ID:", productId);
 
 // Test product lookup
 dataSource
   .findProductById(productId)
-  .then((product) => console.log("Product Details:", product))
+  // .then((productItem) => console.log("Product Details:", productItem))
   .catch((error) => console.error(error));
 
 // Existing cart functionality remains unchanged
-function addProductToCart(product) {
+function addProductToCart(productItem) {
   let cartItems = getLocalStorage("so-cart");
-  cartItems.push(product);
+  cartItems.push(productItem);
   setLocalStorage("so-cart", cartItems);
 }
 
 document.getElementById("addToCart").addEventListener("click", async (e) => {
-  const product = await dataSource.findProductById(e.target.dataset.id);
-  addProductToCart(product);
+  const productItem = await dataSource.findProductById(e.target.dataset.id);
+  addProductToCart(productItem);
 });

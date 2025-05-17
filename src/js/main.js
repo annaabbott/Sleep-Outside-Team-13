@@ -7,5 +7,10 @@ const element = document.querySelector(".product-list");
 
 const list = new ProductList("tents", dataSource, element);
 
-const productList = (await list.init()).filter((product) => product.ImgIsValid);
-list.renderList(productList);
+const productList = (async () => {
+  const list = new ProductList("tents", dataSource, element);
+  const productList = (await list.init()).filter(
+    (product) => product.ImgIsValid,
+  );
+  list.renderList(productList);
+})();

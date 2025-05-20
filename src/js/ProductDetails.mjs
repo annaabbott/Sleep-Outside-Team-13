@@ -12,8 +12,6 @@ export default class ProductDetails {
     try {
       this.product = await this.dataSource.findProductById(this.productId);
       this.renderProductDetails();
-      // document.getElementById('addToCart')
-      //   .addEventListener('click', this.addToCart.bind(this));
     } catch (error) {
       console.error("Error initializing product details:", error);
     }

@@ -18,12 +18,21 @@ dataSource
 
 // Existing cart functionality remains unchanged
 function addProductToCart(productItem) {
-  let cartItems = getLocalStorage("so-cart");
+  let cartItems = getLocalStorage("so-cart", "[]");
   cartItems.push(productItem);
   setLocalStorage("so-cart", cartItems);
 }
 
-document.getElementById("addToCart").addEventListener("click", async (e) => {
-  const productItem = await dataSource.findProductById(e.target.dataset.id);
-  addProductToCart(productItem);
-});
+async function addToCartHandler(e) {
+  const id = e.target.dataset.id;
+  console.log(`addToCartHandler - id: ${id}`);
+  const product = await dataSource.findProductById(e.target.dataset.id);
+  console.log(`addToCartHandler - product`, product);
+
+  addProductToCart(product);
+}
+
+// add listener to Add to Cart button
+document
+  .getElementById("addToCart")
+  .addEventListener("click", addToCartHandler);

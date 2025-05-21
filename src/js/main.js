@@ -13,4 +13,3 @@ loadHeaderFooter();
   );
   tentList.renderList(productList);
 })();
-

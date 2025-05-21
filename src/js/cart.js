@@ -17,8 +17,8 @@ function renderCartContents() {
   cartTotal.textContent = `Total: $${total}`;
   cartSummary.append(cartTotal);
 
-  if (cartItems) {
-    cartSummary.classList.toggle("hide");
+  if (cartItems.length === 0) {
+    cartSummary.classList("hide");
   }
 }
 
@@ -42,12 +42,11 @@ function cartItemTemplate(item) {
 }
 
 function calcTotal(cartItems) {
-  
-  let total = 0
-  cartItems.forEach(item => { 
-    total = total + item.FinalPrice
+  let total = 0;
+  cartItems.forEach((item) => {
+    total = total + item.FinalPrice;
   });
-  return total
+  return total;
 }
 
 renderCartContents();

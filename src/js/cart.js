@@ -8,7 +8,6 @@ function renderCartContents() {
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
   const cartSummary = document.createElement("div");
   cartSummary.classList.add("cartSummary");
-  cartSummary.classList.add("hide");
   prodSection.append(cartSummary);
   const cartTotal = document.createElement("p");
   cartTotal.classList.add("cartTotal");
@@ -18,7 +17,7 @@ function renderCartContents() {
   cartSummary.append(cartTotal);
 
   if (cartItems.length === 0) {
-    cartSummary.classList("hide");
+    cartSummary.classList.add("hide");
   }
 }
 

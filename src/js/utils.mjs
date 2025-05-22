@@ -27,3 +27,11 @@ export function getParam(param) {
   const urlParams = new URLSearchParams(queryString);
   return urlParams.get(param);
 };
+
+export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
+  if (clear) {
+    parentElement.innerHTML = ""; // clear out old stuff
+  }
+  const htmlStrings = list.map(templateFn); // build all cards
+  parentElement.insertAdjacentHTML(position, htmlStrings.join("")); // add them to the box
+}

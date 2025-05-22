@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./ProductData.mjs";
+import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 export default class ProductDetails {
     constructor(productId, dataSource) {
@@ -12,31 +12,28 @@ export default class ProductDetails {
         this.renderProductDetails();
         document
             .getElementById("addToCart")
-            .addEventListener("click", this.addProductToCart.bind(this));
+            .addEventListener("click", this.addToCart.bind(this));
     }
 
-    addProductToCart() {
-        const cartItems = getLocalStorage("so-cart") || [];
+    addToCart() {
+        let cartItems = getLocalStorage("so-cart") || [];
         cartItems.push(this.product);
         setLocalStorage("so-cart", cartItems);
     }
 
     renderProductDetails() {
-        productDetailTemplate(this.product);
+        // Update the DOM with product details
+        document.querySelector('h3').textContent = this.product.Brand.Name;
+        document.querySelector('h2').textContent = this.product.NameWithoutBrand;
+
+        const imgElement = document.querySelector('.product-detail img');
+        imgElement.src = this.product.Image;
+        imgElement.alt = this.product.NameWithoutBrand;
+
+        document.querySelector('.product-card__price').textContent = `$${this.product.FinalPrice}`;
+        document.querySelector('.product__color').textContent = this.product.Colors[0].ColorName;
+        document.querySelector('.product__description').textContent = this.product.DescriptionText;
+
+        document.getElementById('addToCart').dataset.id = this.product.Id;
     }
-}
-
-function productDetailsTemplate(product) {
-    document.querySelector('h2').textContent = product.Brand.Name;
-    document.querySelector('h3').textContent = product.NameWithoutBrand;
-
-    const productImage = document.getElementById('productImage');
-    productImage.src = product.Image;
-    productImage.alt = product.NameWithoutBrand;
-
-    document.getElementById('productPrice').textContent = product.FinalPrice;
-    document.getElementById('productColor').textContent = product.Colors[0].ColorName;
-    document.getElementById('productDesc').innerHTML = product.DescriptionHtmlSimple;
-
-    document.getElementById('addToCart').dataset.id = product.Id;
 }

@@ -168,6 +168,12 @@ button {
   color: var(--dark-grey);
 }
 
+.product-category {
+  display: flex;
+  list-style-type: none;
+  justify-content: space-around;
+}
+
 /* Styles for product lists */
 .product-card {
   flex: 1 1 45%;

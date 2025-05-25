@@ -1,6 +1,6 @@
 import {
-  getLocalStorage,
-  setLocalStorage,
+  getShoppingCart,
+  setShoppingCart,
   getParam,
   loadHeaderFooter,
 } from "./utils.mjs";
@@ -25,9 +25,9 @@ dataSource
 
 // Existing cart functionality remains unchanged
 function addProductToCart(productItem) {
-  let cartItems = getLocalStorage("so-cart", "[]");
+  let cartItems = getShoppingCart();
   cartItems.push(productItem);
-  setLocalStorage("so-cart", cartItems);
+  setShoppingCart(cartItems);
 }
 
 async function addToCartHandler(e) {

@@ -5,13 +5,15 @@ export function qs(selector, parent = document) {
 // or a more concise version if you are into that sort of thing:
 // export const qs = (selector, parent = document) => parent.querySelector(selector);
 
+const SO_CART = "so-cart";
+
 // retrieve data from localstorage
-export function getLocalStorage(key, def = undefined) {
-  return JSON.parse(localStorage.getItem(key) || def);
+export function getShoppingCart() {
+  return JSON.parse(localStorage.getItem(SO_CART) || "[]");
 }
 // save data to local storage
-export function setLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+export function setShoppingCart(data) {
+  localStorage.setItem(SO_CART, JSON.stringify(data));
 }
 // set a listener for both touchend and click
 export function setClick(selector, callback) {

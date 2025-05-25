@@ -1,11 +1,13 @@
-import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
-
+import {
+  getShoppingCart,
+  loadHeaderFooter,
+} from "./utils.mjs";
 const prodSection = document.querySelector(".products");
 
 loadHeaderFooter();
 
 function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart", "[]");
+    const cartItems = getShoppingCart();
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
   const cartSummary = document.createElement("div");
@@ -24,10 +26,11 @@ function renderCartContents() {
 }
 
 function cartItemTemplate(item) {
+  console.log (`cartItemTemplate - item:`,item)
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
     <img
-      src="${item.Image}"
+      src="${item.Images.PrimarySmall}"
       alt="${item.Name}"
     />
   </a>
@@ -49,5 +52,5 @@ function calcTotal(cartItems) {
   });
   return total;
 }
-
+console.log("cart.js loaded");
 renderCartContents();

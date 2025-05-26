@@ -8,16 +8,21 @@ export function qs(selector, parent = document) {
 const SO_CART = "so-cart";
 
 // retrieve data from localstorage
- export function getShoppingCart() {
+export function getShoppingCart() {
   return JSON.parse(localStorage.getItem(SO_CART) || "[]");
 }
 
-  export function addProductToCart(product) {
-    const cartItems = getShoppingCart();
+export function addProductToCart(product) {
+  const cartItems = getShoppingCart();
+  const match = cartItems.find((item) => item.Id === product.Id);
+  if (match) {
+    match.count++;
+  } else {
+    product.count = 1;
     cartItems.push(product);
-    setShoppingCart(cartItems);
   }
-
+  setShoppingCart(cartItems);
+}
 
 // save data to local storage
 export function setShoppingCart(data) {

@@ -9,37 +9,24 @@
   </head>
 
   <body>
-    <header class="divider">
-      <div class="logo">
-        <img src="../images/noun_Tent_2517.svg" alt="tent image for logo" />
-        <a href="../index.html">Sleep<span class="highlight">Outside</span></a>
-      </div>
-      <div class="cart">
-        <a href="../cart/">
-          <!-- SVG del carrito -->
-        </a>
-      </div>
-    </header>
-
+    <header class="divider" id="main-header"></header>
     <main class="divider">
       <section class="product-detail">
-        <h3 id="brand-name"></h3>
-        <h2 class="divider" id="product-name"></h2>
-        <img
-          class="divider"
-          id="product-image"
-          alt="Product image"
-          src="../images/placeholder.png"
-        />
-        <p class="product-card__price" id="product-price"></p>
-        <p class="product__color" id="product-color"></p>
-        <p class="product__description" id="product-description"></p>
-        <div class="product-detail__add">
-          <button id="addToCart">Add to Cart</button>
-        </div>
+        <h2>Product Details</h2>
+        <figure>
+          <img src="" alt="" id="p-image" width="300" />
+        </figure>
+        <section id="product-info">
+          <h3 id="p-brand"></h3>
+          <p id="p-name"></p>
+
+          <p id="p-color"></p>
+          <p id="p-description"></p>
+          <p id="p-price"></p>
+          <button id="addToCart" data-id="">Add to Cart</button>
+        </section>
       </section>
     </main>
-
-    <footer>&copy;NOT a real business</footer>
+    <footer id="main-footer"></footer>
   </body>
 </html>

@@ -1,6 +1,4 @@
 import {
-  getShoppingCart,
-  setShoppingCart,
   getParam,
   loadHeaderFooter,
 } from "./utils.mjs";
@@ -23,23 +21,3 @@ dataSource
   .then((productItem) => console.log("Product Details:", productItem))
   .catch((error) => console.error(error));
 
-// Existing cart functionality remains unchanged
-function addProductToCart(productItem) {
-  let cartItems = getShoppingCart();
-  cartItems.push(productItem);
-  setShoppingCart(cartItems);
-}
-
-async function addToCartHandler(e) {
-  const id = e.target.dataset.id;
-  console.log(`addToCartHandler - id: ${id}`);
-  const product = await dataSource.findProductById(e.target.dataset.id);
-  console.log(`addToCartHandler - product`, product);
-
-  addProductToCart(product);
-}
-
-// add listener to Add to Cart button
-document
-  .getElementById("addToCart")
-  .addEventListener("click", addToCartHandler);

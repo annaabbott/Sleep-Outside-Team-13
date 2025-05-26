@@ -1,4 +1,4 @@
-import { getShoppingCart, setShoppingCart } from "./utils.mjs";
+import { addProductToCart} from "./utils.mjs";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -16,13 +16,7 @@ export default class ProductDetails {
     // Notice the .bind(this). This callback will not work if the bind(this) is missing. Review the readings from this week on "this" to understand why.
     document
       .getElementById("addToCart")
-      .addEventListener("click", this.addProductToCart.bind(this));
-  }
-
-  addProductToCart() {
-    const cartItems = getShoppingCart();
-    cartItems.push(this.product);
-    setShoppingCart(cartItems);
+      .addEventListener("click", () => addProductToCart(this.product));
   }
 
   renderProductDetails() {

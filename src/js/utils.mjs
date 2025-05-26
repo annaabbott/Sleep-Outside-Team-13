@@ -8,9 +8,17 @@ export function qs(selector, parent = document) {
 const SO_CART = "so-cart";
 
 // retrieve data from localstorage
-export function getShoppingCart() {
+ export function getShoppingCart() {
   return JSON.parse(localStorage.getItem(SO_CART) || "[]");
 }
+
+  export function addProductToCart(product) {
+    const cartItems = getShoppingCart();
+    cartItems.push(product);
+    setShoppingCart(cartItems);
+  }
+
+
 // save data to local storage
 export function setShoppingCart(data) {
   localStorage.setItem(SO_CART, JSON.stringify(data));

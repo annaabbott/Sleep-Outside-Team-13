@@ -1,13 +1,10 @@
-import {
-  getShoppingCart,
-  loadHeaderFooter,
-} from "./utils.mjs";
+import { getShoppingCart, loadHeaderFooter, calcSubTotal } from "./utils.mjs";
 const prodSection = document.querySelector(".products");
 
 loadHeaderFooter();
 
 function renderCartContents() {
-    const cartItems = getShoppingCart();
+  const cartItems = getShoppingCart();
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
   const cartSummary = document.createElement("div");
@@ -16,7 +13,7 @@ function renderCartContents() {
   const cartTotal = document.createElement("p");
   cartTotal.classList.add("cartTotal");
 
-  let total = calcTotal(cartItems);
+  let total = calcSubTotal(cartItems);
   cartTotal.textContent = `Total: $${total}`;
   cartSummary.append(cartTotal);
 
@@ -26,7 +23,7 @@ function renderCartContents() {
 }
 
 function cartItemTemplate(item) {
-  console.log (`cartItemTemplate - item:`,item)
+  console.log(`cartItemTemplate - item:`, item);
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
     <img
@@ -45,12 +42,12 @@ function cartItemTemplate(item) {
   return newItem;
 }
 
-function calcTotal(cartItems) {
-  let total = 0;
-  cartItems.forEach((item) => {
-    total = total + item.FinalPrice;
-  });
-  return total;
-}
+// function calcSubTotal(cartItems) {
+//   let total = 0;
+//   cartItems.forEach((item) => {
+//     total = total + item.FinalPrice;
+//   });
+//   return total;
+// }
 console.log("cart.js loaded");
 renderCartContents();

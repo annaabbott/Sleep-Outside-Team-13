@@ -1,7 +1,4 @@
-import {
-  getParam,
-  loadHeaderFooter,
-} from "./utils.mjs";
+import { getParam, loadHeaderFooter } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 
@@ -20,4 +17,3 @@ dataSource
   .findProductById(productId)
   .then((productItem) => console.log("Product Details:", productItem))
   .catch((error) => console.error(error));
-

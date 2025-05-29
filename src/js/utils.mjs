@@ -79,3 +79,12 @@ export async function loadHeaderFooter() {
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
 }
+
+export function calcSubTotal(cartItems) {
+ 
+  let total = 0;
+  cartItems.forEach((item) => {
+    total = total + item.FinalPrice;
+  });
+  return total;
+}

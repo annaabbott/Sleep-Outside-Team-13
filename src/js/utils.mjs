@@ -81,6 +81,7 @@ export async function loadHeaderFooter() {
 }
 
 export function calcSubTotal(cartItems) {
+ 
   let total = 0;
   cartItems.forEach((item) => {
     total = total + item.FinalPrice;

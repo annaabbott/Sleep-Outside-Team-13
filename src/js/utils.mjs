@@ -5,13 +5,33 @@ export function qs(selector, parent = document) {
 // or a more concise version if you are into that sort of thing:
 // export const qs = (selector, parent = document) => parent.querySelector(selector);
 
+const SO_CART = "so-cart";
+
 // retrieve data from localstorage
+<<<<<<< HEAD
 export function getLocalStorage(key) {
   return JSON.parse(localStorage.getItem(key));
+=======
+export function getShoppingCart() {
+  return JSON.parse(localStorage.getItem(SO_CART) || "[]");
+>>>>>>> 1fb615a2eeb33ceb04da6cda2fe0eee2590fbea1
 }
+
+export function addProductToCart(product) {
+  const cartItems = getShoppingCart();
+  const match = cartItems.find((item) => item.Id === product.Id);
+  if (match) {
+    match.count++;
+  } else {
+    product.count = 1;
+    cartItems.push(product);
+  }
+  setShoppingCart(cartItems);
+}
+
 // save data to local storage
-export function setLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+export function setShoppingCart(data) {
+  localStorage.setItem(SO_CART, JSON.stringify(data));
 }
 // set a listener for both touchend and click
 export function setClick(selector, callback) {
@@ -61,4 +81,17 @@ export async function loadHeaderFooter() {
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
+<<<<<<< HEAD
 }
+=======
+}
+
+export function calcSubTotal(cartItems) {
+ 
+  let total = 0;
+  cartItems.forEach((item) => {
+    total = total + item.FinalPrice;
+  });
+  return total;
+}
+>>>>>>> 1fb615a2eeb33ceb04da6cda2fe0eee2590fbea1

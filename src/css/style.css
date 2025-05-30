@@ -34,7 +34,6 @@ header {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem;
-  width: 100%;
 }
 
 p {
@@ -45,6 +44,7 @@ p {
   line-height: 60px;
   width: 245px;
   overflow: hidden;
+  display: flex;
   font-size: 30px;
   text-align: right;
   font-family: var(--font-headline);
@@ -58,7 +58,6 @@ p {
 .logo a {
   text-decoration: none;
   color: var(--font-body);
-  display: flex;
 }
 
 .hero {
@@ -194,12 +193,6 @@ button {
 .product-list a {
   text-decoration: none;
   color: var(--dark-grey);
-}
-
-.product-category {
-  display: flex;
-  list-style-type: none;
-  justify-content: space-around;
 }
 
 /* Styles for product lists */

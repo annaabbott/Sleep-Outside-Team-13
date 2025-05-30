@@ -1,26 +1,11 @@
 import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
 
-const prodSection = document.querySelector(".products");
-
 loadHeaderFooter();
 
 function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart", "[]");
+  const cartItems = getLocalStorage("so-cart");
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
-  const cartSummary = document.createElement("div");
-  cartSummary.classList.add("cartSummary");
-  prodSection.append(cartSummary);
-  const cartTotal = document.createElement("p");
-  cartTotal.classList.add("cartTotal");
-
-  let total = calcTotal(cartItems);
-  cartTotal.textContent = `Total: $${total}`;
-  cartSummary.append(cartTotal);
-
-  if (cartItems.length === 0) {
-    cartSummary.classList.add("hide");
-  }
 }
 
 function cartItemTemplate(item) {
@@ -40,14 +25,6 @@ function cartItemTemplate(item) {
 </li>`;
 
   return newItem;
-}
-
-function calcTotal(cartItems) {
-  let total = 0;
-  cartItems.forEach((item) => {
-    total = total + item.FinalPrice;
-  });
-  return total;
 }
 
 renderCartContents();

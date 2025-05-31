@@ -81,10 +81,17 @@ export async function loadHeaderFooter() {
 }
 
 export function calcSubTotal(cartItems) {
- 
   let total = 0;
   cartItems.forEach((item) => {
     total = total + item.FinalPrice;
   });
   return total;
+}
+
+export async function convertToJson(response) {
+  const json = await response.json();
+  if (!response.ok) {
+    throw { name: "servicesError", message: jsonResponse };
+  }
+  return json;
 }

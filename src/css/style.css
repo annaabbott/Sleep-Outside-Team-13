@@ -198,6 +198,20 @@ button {
   font-size: 1em;
 }
 
+dialog {
+  border: 1px solid var(--light-grey);
+  max-width: 250px;
+  margin: 10% auto;
+  padding: 0.5em; 
+}
+
+dialog::backdrop {
+  background: var(--dark-grey);
+}
+
+.modalBtn {
+  margin: 0.5em auto;
+}
 /* End product list card */
 
 .product-detail {

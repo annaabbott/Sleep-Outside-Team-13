@@ -73,13 +73,13 @@ export default class CheckoutProcess {
       },
       body: JSON.stringify(data),
     };
-    const response = await fetch(url, options);
-    if (response.ok) {
-      console.log("Submit response: ", await response.json());
-      alert("order successfully submitted!");
-    } else {
-        alert("Error submitting the order");
-      throw new Error("Bad Response");
+    try {
+      const response = await fetch(url, options);
+      console.log("Order successfully placed!", response);
+      window.location.href = "../checkout/success.html";
+      order.list.innerText = "";
+    } catch (error) {
+      console.log("Order failed.", error.message);
     }
   }
 }

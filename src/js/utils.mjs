@@ -5,14 +5,30 @@ export function qs(selector, parent = document) {
 // or a more concise version if you are into that sort of thing:
 // export const qs = (selector, parent = document) => parent.querySelector(selector);
 
-// retrieve data from localstorage
-export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
-}
+const SO_CART = "so-cart";
+
 // save data to local storage
-export function setLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+export function getShoppingCart() {
+  return JSON.parse(localStorage.getItem(SO_CART) || "[]");
 }
+
+export function addProductToCart(product) {
+  const cartItems = getShoppingCart();
+  const match = cartItems.find((item) => item.Id === product.Id);
+  if (match) {
+    match.count++;
+  } else {
+    product.count = 1;
+    cartItems.push(product);
+  }
+  setShoppingCart(cartItems);
+}
+
+// save data to local storage
+export function setShoppingCart(data) {
+  localStorage.setItem(SO_CART, JSON.stringify(data));
+}
+
 // set a listener for both touchend and click
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
@@ -27,10 +43,16 @@ export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const product = urlParams.get(param);
-  return product
+  return product;
 }
 
-export function renderListWithTemplate(template, parentElement, list, position = "afterbegin", clear = false) {
+export function renderListWithTemplate(
+  template,
+  parentElement,
+  list,
+  position = "afterbegin",
+  clear = false,
+) {
   const htmlStrings = list.map(template);
   // if clear is true we need to clear out the contents of the parent.
   if (clear) {
@@ -52,6 +74,14 @@ async function loadTemplate(path) {
   return template;
 }
 
+function updateCartCount() {
+  const cartCountElement = document.getElementById('cart-count');
+  const cartItems = getShoppingCart();
+  const itemCount = cartItems.length;
+
+  cartCountElement.textContent = itemCount;
+}
+
 export async function loadHeaderFooter() {
   const headerTemplate = await loadTemplate("../partials/header.html");
   const footerTemplate = await loadTemplate("../partials/footer.html");
@@ -61,4 +91,21 @@ export async function loadHeaderFooter() {
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
+  updateCartCount();
+}
+
+export function calcSubTotal(cartItems) {
+  let total = 0;
+  cartItems.forEach((item) => {
+    total = total + item.FinalPrice;
+  });
+  return total;
+}
+
+export async function convertToJson(response) {
+  const json = await response.json();
+  if (!response.ok) {
+    throw { name: "servicesError", message: jsonResponse };
+  }
+  return json;
 }

@@ -23,6 +23,7 @@ function renderCartContents() {
 }
 
 function cartItemTemplate(item) {
+  console.log(`cartItemTemplate - item:`, item);
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
     <img
@@ -41,4 +42,12 @@ function cartItemTemplate(item) {
   return newItem;
 }
 
+// function calcSubTotal(cartItems) {
+//   let total = 0;
+//   cartItems.forEach((item) => {
+//     total = total + item.FinalPrice;
+//   });
+//   return total;
+// }
+console.log("cart.js loaded");
 renderCartContents();

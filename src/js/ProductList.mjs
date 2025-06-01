@@ -1,23 +1,6 @@
 import { addProductToCart, renderListWithTemplate } from "./utils.mjs";
 
-//   <li class="product-card">
-//     <a href="product_pages/marmot-ajax-3.html">
-//       <img
-//         src="images/tents/marmot-ajax-tent-3-person-3-season-in-pale-pumpkin-terracotta~p~880rr_01~320.jpg"
-//         alt="Marmot Ajax tent"
-//       />
-//       <h3 class="card__brand">Marmot</h3>
-//       <h2 class="card__name">Ajax Tent - 3-Person, 3-Season</h2>
-//       <p class="product-card__price">$199.99</p>
-//     </a>
-//   </li>
-
 function productCardTemplate(product) {
-  const {
-    Id,
-    Image,
-    Brand: { Name },
-  } = product;
   return `
     <li class="product-card">
         <a href="/product_pages/?product=${product.Id}">
@@ -57,7 +40,7 @@ export default class ProductList {
   async init() {
     const list = await this.dataSource.getData(this.category);
     console.log(list);
-    this.renderList(list.Result);
+    this.renderList(list);
     document.querySelector("#product-category").textContent = this.category;
   }
 
@@ -77,10 +60,14 @@ export default class ProductList {
 
     addToCartBtn.addEventListener("click", () => {
       addProductToCart(product);
-    })
+    });
   }
 
   renderList(list) {
+    // const htmlStrings = list.map(productCardTemplate);
+    // this.listElement.insertAdjacentHTML("afterbegin", htmlStrings.join(""));
+
+    // apply use new utility function instead of the commented code above
     renderListWithTemplate(productCardTemplate, this.listElement, list);
     for (let i = 0; i < list.length; i++) {
       this.addTemplateEventListeners(list[i]);

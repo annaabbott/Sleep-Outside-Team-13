@@ -1,6 +1,30 @@
-import { getShoppingCart, calcSubTotal, loadHeaderFooter } from "./utils.mjs";
+import { getLocalStorage } from "./utils.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 
-loadHeaderFooter();
+const services = new ExternalServices();
+
+function formDataToJSON(formElement) {
+  // convert the form data to a JSON object
+  const formData = new FormData(formElement);
+  const convertedJSON = {};
+  formData.forEach((value, key) => {
+    convertedJSON[key] = value;
+  });
+  return convertedJSON;
+}
+
+function packageItems(items) {
+  const simplifiedItems = items.map((item) => {
+    console.log(item);
+    return {
+      id: item.Id,
+      price: item.FinalPrice,
+      name: item.Name,
+      quantity: 1,
+    };
+  });
+  return simplifiedItems;
+}
 
 export default class CheckoutProcess {
   constructor(key, outputSelector) {
@@ -14,78 +38,65 @@ export default class CheckoutProcess {
   }
 
   init() {
-    this.list = getShoppingCart();
-    this.calculateItemSubTotal();
-    this.calculateOrderTotal();
-    this.displayOrderTotals();
+    this.list = getLocalStorage(this.key);
+    this.calculateItemSummary();
   }
 
-  calculateItemSubTotal() {
-    this.itemTotal = calcSubTotal(this.list);
-    return this.itemTotal;
+  calculateItemSummary() {
+    // calculate and display the total amount of the items in the cart, and the number of items.
+    const summaryElement = document.querySelector(
+      this.outputSelector + " #cartTotal"
+    );
+    const itemNumElement = document.querySelector(
+      this.outputSelector + " #num-items"
+    );
+    itemNumElement.innerText = this.list.length;
+    // calculate the total of all the items in the cart
+    const amounts = this.list.map((item) => item.FinalPrice);
+    this.itemTotal = amounts.reduce((sum, item) => sum + item);
+    summaryElement.innerText = `$${this.itemTotal}`;;
   }
 
   calculateOrderTotal() {
-    this.tax = 0.06 * this.itemTotal;
-    this.shipping = 10 + 2 * (this.list.length - 1);
-    this.orderTotal = this.tax + this.shipping + this.itemTotal;
+    // calculate the shipping and tax amounts. Then use them to along with the cart total to figure out the order total
+    this.tax = (this.itemTotal * .06);
+    this.shipping = 10 + (this.list.length - 1) * 2;
+    this.orderTotal = (
+      parseFloat(this.itemTotal) +
+      parseFloat(this.tax) +
+      parseFloat(this.shipping)
+    )
+    // display the totals.
+    this.displayOrderTotals();
   }
 
   displayOrderTotals() {
-    const subTotal = document.querySelector("#subtotal");
-    subTotal.innerText = `$${this.itemTotal.toFixed(2)}`;
-    const tax = document.querySelector("#tax");
+    // once the totals are all calculated display them in the order summary page
+    const tax = document.querySelector(`${this.outputSelector} #tax`);
+    const shipping = document.querySelector(`${this.outputSelector} #shipping`);
+    const orderTotal = document.querySelector(`${this.outputSelector} #orderTotal`);
+
     tax.innerText = `$${this.tax.toFixed(2)}`;
-    const shipping = document.querySelector("#shipping");
     shipping.innerText = `$${this.shipping.toFixed(2)}`;
-    const orderTotal = document.querySelector("#orderTotal");
     orderTotal.innerText = `$${this.orderTotal.toFixed(2)}`;
   }
 
-  async submit(event) {
-    event.preventDefault();
-    const form = document.forms.checkoutForm;
-    const checkoutItems = this.list.map((item) => ({
-      id: item.Id,
-      name: item.Name,
-      price: item.FinalPrice,
-      quantity: item.count,
-    }));
+  async checkout() {
+    const formElement = document.forms["checkout"];
+    const order = formDataToJSON(formElement);
 
-    const data = {
-      orderDate: new Date(),
-      fname: form.fname.value,
-      lname: form.lname.value,
-      street: form.street.value,
-      city: form.city.value,
-      state: form.state.value,
-      zip: form.zip.value,
-      cardNumber: form.cardNumber.value,
-      expiration: form.expiration.value,
-      code: form.code.value,
-      items: checkoutItems,
-    };
-    const url = "http://wdd330-backend.onrender.com/checkout";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-    const response = await fetch(url, options);
-    if (response.ok) {
-      console.log("Submit response: ", await response.json());
-      alert("order successfully submitted!");
-    } else {
-        alert("Error submitting the order");
-      throw new Error("Bad Response");
+    order.orderDate = new Date().toISOString();
+    order.orderTotal = this.orderTotal;
+    order.tax = this.tax;
+    order.shipping = this.shipping;
+    order.items = packageItems(this.list);
+    //console.log(order);
+
+    try {
+      const response = await services.checkout(order);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
     }
   }
 }
-const order = new CheckoutProcess();
-order.init();
-
-document
-  .querySelector("#checkout")
-  .addEventListener("click", (e) => order.submit(e));

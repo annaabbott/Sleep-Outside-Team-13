@@ -1,41 +1,49 @@
-import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
+import { getLocalStorage, loadHeaderFooter, updateCartCount } from "./utils.mjs";
 
-loadHeaderFooter();
+async function initialize() {
+  await loadHeaderFooter();
+  renderCartContents();
+}
 
 function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart");
-  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
-  document.querySelector(".product-list").innerHTML = htmlItems.join("");
+  const cartItems = getLocalStorage("so-cart") || [];
+  const productList = document.querySelector(".product-list");
+  
+  if (!productList) return;
+  
+  productList.innerHTML = cartItems.length > 0 
+    ? cartItems.map(cartItemTemplate).join("")
+    : "<li>Your cart is empty</li>";
+  
+  updateTotal(cartItems);
+  updateCartCount();
 }
 
 function cartItemTemplate(item) {
-  const newItem = `<li class="cart-card divider">
+  const quantity = item.quantity || 1;
+  return `<li class="cart-card divider">
     <a href="#" class="cart-card__image">
-      <img
-        src="${item.Image}"
-        alt="${item.Name}"
-      />
+      <img src="${item.Image}" alt="${item.Name}" />
     </a>
-    <a href="#">
-      <h2 class="card__name">${item.Name}</h2>
-    </a>
+    <a href="#"><h2 class="card__name">${item.Name}</h2></a>
     <p class="cart-card__color">${item.Colors[0].ColorName}</p>
-    <p class="cart-card__quantity">qty: 1</p>
-    <p class="cart-card__price">$${item.FinalPrice}</p>
+    <p class="cart-card__quantity">qty: ${quantity}</p>
+    <p class="cart-card__price">$${(item.FinalPrice * quantity).toFixed(2)}</p>
   </li>`;
-
-  return newItem;
 }
 
-function updateCartCount() {
-  const cartCountElement = document.getElementById('cart-count');
-  const cartItems = getLocalStorage('so-cart') || [];
-  const itemCount = cartItems.length;
-
-  cartCountElement.textContent = itemCount;
+function updateTotal(cartItems) {
+  const total = cartItems.reduce((sum, item) => {
+    const quantity = item.quantity || 1;
+    const price = item.FinalPrice || item.SuggestedRetailPrice || 0;
+    return sum + (price * quantity);
+  }, 0);
+  
+  const totalElement = document.querySelector(".list-total");
+  if (totalElement) {
+    totalElement.textContent = `Total: $${total.toFixed(2)}`;
+    totalElement.classList.toggle("hide", cartItems.length === 0);
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderCartContents();
-  updateCartCount();
-});
+initialize();

@@ -1,19 +1,36 @@
-// wrapper for querySelector...returns matching element
+// Utilidades básicas
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
 
-// retrieve data from localstorage
 export function getLocalStorage(key) {
   return JSON.parse(localStorage.getItem(key));
 }
-// save data to local storage
+
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-// set a listener for both touchend and click
+
+// Actualización del contador del carrito (versión mejorada)
+export function updateCartCount() {
+  const cartCountElement = document.getElementById('cart-count');
+  if (!cartCountElement) return;
+  
+  const cartItems = getLocalStorage('so-cart') || [];
+  const itemCount = cartItems.reduce((total, item) => {
+    return total + (item.quantity || 1);
+  }, 0);
+  
+  cartCountElement.textContent = itemCount;
+  return itemCount; // Devuelve el conteo por si se necesita
+}
+
+// Función para ser llamada desde otras páginas
+export function updateCart() {
+  updateCartCount();
+}
+
+// Resto de tus utilidades existentes...
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
     event.preventDefault();
@@ -22,43 +39,44 @@ export function setClick(selector, callback) {
   qs(selector).addEventListener("click", callback);
 }
 
-// get the product id from the query string
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const product = urlParams.get(param);
-  return product
+  return urlParams.get(param);
 }
 
 export function renderListWithTemplate(template, parentElement, list, position = "afterbegin", clear = false) {
-  const htmlStrings = list.map(template);
-  // if clear is true we need to clear out the contents of the parent.
-  if (clear) {
-    parentElement.innerHTML = "";
-  }
-  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+  if (clear) parentElement.innerHTML = "";
+  parentElement.insertAdjacentHTML(position, list.map(template).join(""));
 }
 
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
-  if (callback) {
-    callback(data);
-  }
+  if (callback) callback(data);
 }
 
 async function loadTemplate(path) {
   const res = await fetch(path);
-  const template = await res.text();
-  return template;
+  return await res.text();
 }
 
 export async function loadHeaderFooter() {
-  const headerTemplate = await loadTemplate("../partials/header.html");
-  const footerTemplate = await loadTemplate("../partials/footer.html");
-
-  const headerElement = document.querySelector("#main-header");
-  const footerElement = document.querySelector("#main-footer");
-
-  renderWithTemplate(headerTemplate, headerElement);
-  renderWithTemplate(footerTemplate, footerElement);
+  try {
+    const [header, footer] = await Promise.all([
+      loadTemplate("../partials/header.html"),
+      loadTemplate("../partials/footer.html")
+    ]);
+    
+    const headerElement = qs("#main-header");
+    const footerElement = qs("#main-footer");
+    
+    if (headerElement) {
+      renderWithTemplate(header, headerElement);
+      // Actualizar el contador después de cargar el header
+      updateCartCount();
+    }
+    if (footerElement) renderWithTemplate(footer, footerElement);
+  } catch (error) {
+    console.error("Error loading templates:", error);
+  }
 }

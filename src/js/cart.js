@@ -1,5 +1,10 @@
 import { getLocalStorage, loadHeaderFooter, updateCartCount } from "./utils.mjs";
 
+// Exporta la función que necesita ProductDetails
+export function updateCart() {
+  updateCartCount();
+}
+
 async function initialize() {
   await loadHeaderFooter();
   renderCartContents();

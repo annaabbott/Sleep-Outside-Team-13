@@ -6,14 +6,30 @@ loadHeaderFooter();
 const order = new CheckoutProcess("so-cart", ".checkout-summary");
 order.init();
 
-// Add event listeners to fire calculateOrderTotal when the user changes the zip code
+// Calcular total cuando se cambia el código postal
 document
   .querySelector("#zip")
-  .addEventListener("blur", order.calculateOrderTotal.bind(order));
+  .addEventListener("blur", () => order.calculateOrderTotal());
 
-// listening for click on the button
-document.querySelector("#checkoutSubmit").addEventListener("click", (e) => {
+// Manejo del envío del formulario
+document.querySelector("#checkoutSubmit").addEventListener("click", async (e) => {
   e.preventDefault();
-
-  order.checkout();
+  
+  const form = document.forms["checkout"];
+  if (form.checkValidity()) {
+    // Mostrar indicador de carga
+    const submitBtn = e.target;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Procesando...";
+    
+    try {
+      await order.checkout();
+    } finally {
+      // Restaurar botón
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Checkout";
+    }
+  } else {
+    form.reportValidity();
+  }
 });

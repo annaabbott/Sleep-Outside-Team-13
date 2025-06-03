@@ -1,10 +1,9 @@
-import { getLocalStorage } from "./utils.mjs";
+import { getLocalStorage, alertMessage } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 
 const services = new ExternalServices();
 
 function formDataToJSON(formElement) {
-  // convert the form data to a JSON object
   const formData = new FormData(formElement);
   const convertedJSON = {};
   formData.forEach((value, key) => {
@@ -14,16 +13,12 @@ function formDataToJSON(formElement) {
 }
 
 function packageItems(items) {
-  const simplifiedItems = items.map((item) => {
-    console.log(item);
-    return {
-      id: item.Id,
-      price: item.FinalPrice,
-      name: item.Name,
-      quantity: 1,
-    };
-  });
-  return simplifiedItems;
+  return items.map((item) => ({
+    id: item.Id,
+    price: item.FinalPrice,
+    name: item.Name,
+    quantity: item.quantity || 1,
+  }));
 }
 
 export default class CheckoutProcess {
@@ -38,65 +33,88 @@ export default class CheckoutProcess {
   }
 
   init() {
-    this.list = getLocalStorage(this.key);
+    this.list = getLocalStorage(this.key) || [];
     this.calculateItemSummary();
   }
 
   calculateItemSummary() {
-    // calculate and display the total amount of the items in the cart, and the number of items.
     const summaryElement = document.querySelector(
-      this.outputSelector + " #cartTotal"
+      `${this.outputSelector} #cartTotal`
     );
     const itemNumElement = document.querySelector(
-      this.outputSelector + " #num-items"
+      `${this.outputSelector} #num-items`
     );
+    
     itemNumElement.innerText = this.list.length;
-    // calculate the total of all the items in the cart
-    const amounts = this.list.map((item) => item.FinalPrice);
-    this.itemTotal = amounts.reduce((sum, item) => sum + item);
-    summaryElement.innerText = `$${this.itemTotal}`;;
+    
+    const amounts = this.list.map((item) => parseFloat(item.FinalPrice));
+    this.itemTotal = amounts.reduce((sum, item) => sum + item, 0);
+    summaryElement.innerText = `$${this.itemTotal.toFixed(2)}`;
   }
 
   calculateOrderTotal() {
-    // calculate the shipping and tax amounts. Then use them to along with the cart total to figure out the order total
-    this.tax = (this.itemTotal * .06);
+    this.tax = this.itemTotal * 0.06;
     this.shipping = 10 + (this.list.length - 1) * 2;
-    this.orderTotal = (
-      parseFloat(this.itemTotal) +
-      parseFloat(this.tax) +
-      parseFloat(this.shipping)
-    )
-    // display the totals.
+    this.orderTotal = this.itemTotal + this.tax + this.shipping;
     this.displayOrderTotals();
   }
 
   displayOrderTotals() {
-    // once the totals are all calculated display them in the order summary page
-    const tax = document.querySelector(`${this.outputSelector} #tax`);
-    const shipping = document.querySelector(`${this.outputSelector} #shipping`);
-    const orderTotal = document.querySelector(`${this.outputSelector} #orderTotal`);
+    const taxElement = document.querySelector(`${this.outputSelector} #tax`);
+    const shippingElement = document.querySelector(`${this.outputSelector} #shipping`);
+    const orderTotalElement = document.querySelector(`${this.outputSelector} #orderTotal`);
 
-    tax.innerText = `$${this.tax.toFixed(2)}`;
-    shipping.innerText = `$${this.shipping.toFixed(2)}`;
-    orderTotal.innerText = `$${this.orderTotal.toFixed(2)}`;
+    taxElement.innerText = `$${this.tax.toFixed(2)}`;
+    shippingElement.innerText = `$${this.shipping.toFixed(2)}`;
+    orderTotalElement.innerText = `$${this.orderTotal.toFixed(2)}`;
   }
 
   async checkout() {
     const formElement = document.forms["checkout"];
-    const order = formDataToJSON(formElement);
+    
+    // Validación del formulario
+    if (!formElement.checkValidity()) {
+      formElement.reportValidity();
+      alertMessage("Por favor completa todos los campos requeridos");
+      return;
+    }
 
-    order.orderDate = new Date().toISOString();
-    order.orderTotal = this.orderTotal;
-    order.tax = this.tax;
-    order.shipping = this.shipping;
-    order.items = packageItems(this.list);
-    //console.log(order);
+    // Validación de carrito vacío
+    if (this.list.length === 0) {
+      alertMessage("Tu carrito está vacío. Agrega productos antes de proceder al pago.");
+      return;
+    }
 
     try {
+      const order = formDataToJSON(formElement);
+      order.orderDate = new Date().toISOString();
+      order.orderTotal = this.orderTotal.toFixed(2);
+      order.tax = this.tax.toFixed(2);
+      order.shipping = this.shipping.toFixed(2);
+      order.items = packageItems(this.list);
+
       const response = await services.checkout(order);
-      console.log(response);
+      console.log("Order successful:", response);
+      
+      // Redirigir a página de éxito
+      window.location.href = "../checkout/success.html";
+      
+      // Limpiar carrito
+      localStorage.removeItem(this.key);
     } catch (err) {
-      console.log(err);
+      console.error("Checkout error:", err);
+      
+      // Manejo de errores específicos del servidor
+      if (err.name === 'servicesError') {
+        let errorMessage = err.message;
+        if (err.details) {
+          // Mostrar detalles específicos de validación del servidor
+          errorMessage += ": " + Object.values(err.details).join(", ");
+        }
+        alertMessage(errorMessage);
+      } else {
+        alertMessage("Error al procesar el pedido. Por favor intenta nuevamente.");
+      }
     }
   }
 }
